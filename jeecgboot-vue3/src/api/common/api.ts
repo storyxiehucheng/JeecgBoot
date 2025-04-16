@@ -19,7 +19,7 @@ enum Api {
 /**
  * 上传父路径
  */
-export const uploadUrl = `${baseUploadUrl}/sys/common/upload`;
+export const uploadUrl = `/jeecgboot/sys/common/upload`;
 
 /**
  * 职务列表
@@ -94,7 +94,7 @@ export const loadCategoryData = (params) => {
  * 文件上传
  */
 export const uploadFile = (params, success) => {
-  return defHttp.uploadFile({ url: uploadUrl }, params, { success });
+  return defHttp.uploadFile({ url: Api.uploadUrl }, params, { success });
 };
 /**
  * 下载文件
