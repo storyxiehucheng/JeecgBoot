@@ -642,8 +642,8 @@ public class SysUserController {
     @RequestMapping(value = "/userRoleList", method = RequestMethod.GET)
     public Result<IPage<SysUser>> userRoleList(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                @RequestParam(name="pageSize", defaultValue="10") Integer pageSize, HttpServletRequest req) {
-        Result<IPage<SysUser>> result = new Result<IPage<SysUser>>();
-        Page<SysUser> page = new Page<SysUser>(pageNo, pageSize);
+        Result<IPage<SysUser>> result = new Result<>();
+        Page<SysUser> page = new Page<>(pageNo, pageSize);
         String roleId = req.getParameter("roleId");
         String username = req.getParameter("username");
         IPage<SysUser> pageList = sysUserService.getUserByRoleId(page,roleId,username);
