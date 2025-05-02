@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.demo.kid_tasks.entity.KidTaskRecords;
 import org.jeecg.modules.demo.kid_tasks.entity.KidTasks;
 import org.jeecg.modules.demo.kid_tasks.service.IKidTaskRecordsService;
@@ -68,9 +69,18 @@ public class KidTaskRecordsController extends JeecgController<KidTaskRecords, IK
     @GetMapping(value = "/list")
     public Result<IPage<KidTaskRecords>> queryPageList(KidTaskRecords kidTaskRecords,
         @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
+        @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+        @RequestParam(name = "userName", defaultValue = "") String userName,
+        @RequestParam(name = "taskDate", defaultValue = "") String taskDate,
+        HttpServletRequest req) {
         QueryWrapper<KidTaskRecords> queryWrapper = QueryGenerator.initQueryWrapper(kidTaskRecords,
             req.getParameterMap());
+        if(oConvertUtils.isNotEmpty(userName)) {
+            queryWrapper.eq("user_name", userName);
+        }
+        if(oConvertUtils.isNotEmpty(taskDate)) {
+            queryWrapper.eq("task_date", taskDate);
+        }
         Page<KidTaskRecords> page = new Page<>(pageNo, pageSize);
         IPage<KidTaskRecords> pageList = kidTaskRecordsService.page(page, queryWrapper);
         return Result.OK(pageList);

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.demo.kid_deduction.entity.KidDeductions;
 import org.jeecg.modules.demo.kid_deduction.entity.KidDetuctionsRecords;
 import org.jeecg.modules.demo.kid_deduction.service.IKidDeductionsService;
@@ -20,7 +21,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.jeecg.modules.demo.kid_tasks.entity.KidTaskRecords;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.system.service.ISysUserService;
 import org.jeecg.common.system.base.controller.JeecgController;
@@ -69,9 +69,18 @@ public class KidDeductionsRecordsController
     @GetMapping(value = "/list")
     public Result<IPage<KidDetuctionsRecords>> queryPageList(KidDetuctionsRecords kidDetuctionsRecords,
         @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
+        @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+        @RequestParam(name = "userName", defaultValue = "") String userName,
+        @RequestParam(name = "deductionDate", defaultValue = "") String deductionDate,
+        HttpServletRequest req) {
         QueryWrapper<KidDetuctionsRecords> queryWrapper = QueryGenerator.initQueryWrapper(kidDetuctionsRecords,
             req.getParameterMap());
+        if(oConvertUtils.isNotEmpty(userName)) {
+            queryWrapper.eq("user_name", userName);
+        }
+        if(oConvertUtils.isNotEmpty(deductionDate)) {
+            queryWrapper.eq("task_date", deductionDate);
+        }
         Page<KidDetuctionsRecords> page = new Page<>(pageNo, pageSize);
         IPage<KidDetuctionsRecords> pageList = kidDeductionsRecordsService.page(page, queryWrapper);
         return Result.OK(pageList);
