@@ -64,7 +64,6 @@ public class KidRewardsController extends JeecgController<KidRewards, IKidReward
 	 * @return
 	 */
 	//@AutoLog(value = "儿童习惯奖励模板表-分页列表查询")
-	@IgnoreAuth
 	@Operation(summary = "儿童习惯奖励模板表-分页列表查询")
 	@GetMapping(value = "/list")
 	public Result<IPage<KidRewards>> queryPageList(KidRewards kidRewards,

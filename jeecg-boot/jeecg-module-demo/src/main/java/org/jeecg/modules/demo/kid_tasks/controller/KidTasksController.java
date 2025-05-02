@@ -66,7 +66,6 @@ public class KidTasksController extends JeecgController<KidTasks, IKidTasksServi
 	 * @return
 	 */
 	//@AutoLog(value = "儿童习惯任务模板表-分页列表查询")
-	@IgnoreAuth
 	@Operation(summary = "儿童习惯任务模板表-分页列表查询")
 	@GetMapping(value = "/list")
 	public Result<IPage<KidTasks>> queryPageList(KidTasks kidTasks,
