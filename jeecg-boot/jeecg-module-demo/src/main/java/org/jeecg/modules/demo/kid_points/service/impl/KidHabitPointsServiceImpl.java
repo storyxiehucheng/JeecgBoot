@@ -39,7 +39,8 @@ public class KidHabitPointsServiceImpl extends ServiceImpl<KidHabitPointsMapper,
             return false;
         }
         // 获取当前时间的年月日
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Shanghai"));
+        log.error("ddd---today date is {}", today);
         int totalPoint = 0;
         // 查询最近的一条数据
         LambdaQueryWrapper<KidHabitPoints> lambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -53,8 +54,9 @@ public class KidHabitPointsServiceImpl extends ServiceImpl<KidHabitPointsMapper,
             totalPoint = habitPoint.getTotalPoints();
             // 判断日期是否为今日日期
             LocalDate recordDate = habitPoint.getDate().toInstant()
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of("Asia/Shanghai"))
                 .toLocalDate();
+            log.error("ddd---record date is {}", recordDate);
             // 日期相同，说明已经设置过了，不需要设置了
             if (recordDate.equals(today)){
                 return true;
@@ -69,7 +71,7 @@ public class KidHabitPointsServiceImpl extends ServiceImpl<KidHabitPointsMapper,
             log.error("根据用户名【{}】查询用户失败", userName);
             return false;
         }
-
+        log.error("ddd---instert new date point {}", new Date());
         KidHabitPoints kidHabitPoints = new KidHabitPoints();
         kidHabitPoints.setUserName(userName);
         kidHabitPoints.setUserId(sysUser.getId());

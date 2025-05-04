@@ -75,9 +75,8 @@ public class KidDeductionsRecordsController
         HttpServletRequest req) {
         QueryWrapper<KidDetuctionsRecords> queryWrapper = QueryGenerator.initQueryWrapper(kidDetuctionsRecords,
             req.getParameterMap());
-        if(oConvertUtils.isNotEmpty(userName)) {
-            queryWrapper.eq("user_name", userName);
-        }
+        log.info("KidDetuctionsRecords username:{}", userName);
+        log.info("KidDetuctionsRecords deductionDate:{}", deductionDate);
         if(oConvertUtils.isNotEmpty(deductionDate)) {
             queryWrapper.eq("task_date", deductionDate);
         }

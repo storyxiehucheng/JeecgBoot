@@ -71,18 +71,19 @@ public class KidTaskRecordsController extends JeecgController<KidTaskRecords, IK
         @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
         @RequestParam(name = "userName", defaultValue = "") String userName,
-        @RequestParam(name = "taskDate", defaultValue = "") String taskDate,
+        @RequestParam(name = "taskRecordDate", defaultValue = "") String taskDate,
         HttpServletRequest req) {
         QueryWrapper<KidTaskRecords> queryWrapper = QueryGenerator.initQueryWrapper(kidTaskRecords,
             req.getParameterMap());
-        if(oConvertUtils.isNotEmpty(userName)) {
-            queryWrapper.eq("user_name", userName);
-        }
+        log.info("KidTaskRecords username:{}", userName);
+        log.info("KidTaskRecords taskRecordDate:{}", taskDate);
         if(oConvertUtils.isNotEmpty(taskDate)) {
-            queryWrapper.eq("task_date", taskDate);
+            queryWrapper.eq("task_date",  taskDate);
         }
+
         Page<KidTaskRecords> page = new Page<>(pageNo, pageSize);
         IPage<KidTaskRecords> pageList = kidTaskRecordsService.page(page, queryWrapper);
+        log.info("pageList:{}", pageList.getRecords());
         return Result.OK(pageList);
     }
 
