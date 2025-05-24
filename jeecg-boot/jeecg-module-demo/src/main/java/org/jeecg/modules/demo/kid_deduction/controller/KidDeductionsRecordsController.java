@@ -5,8 +5,10 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.demo.kid_deduction.entity.KidDeductions;
 import org.jeecg.modules.demo.kid_deduction.entity.KidDetuctionsRecords;
@@ -73,6 +75,17 @@ public class KidDeductionsRecordsController
         @RequestParam(name = "userName", defaultValue = "") String userName,
         @RequestParam(name = "deductionDate", defaultValue = "") String deductionDate,
         HttpServletRequest req) {
+
+        if (oConvertUtils.isEmpty(userName)) {
+            //获取当前登录用户
+            LoginUser loginUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+            String loginUserUsername = loginUser.getUsername();
+            // 增加查询条件，查询当前登录用户创建的数据
+            if (oConvertUtils.isNotEmpty(loginUserUsername)) {
+                kidDetuctionsRecords.setUserName(loginUserUsername);
+            }
+        }
+
         QueryWrapper<KidDetuctionsRecords> queryWrapper = QueryGenerator.initQueryWrapper(kidDetuctionsRecords,
             req.getParameterMap());
         log.info("KidDetuctionsRecords username:{}", userName);

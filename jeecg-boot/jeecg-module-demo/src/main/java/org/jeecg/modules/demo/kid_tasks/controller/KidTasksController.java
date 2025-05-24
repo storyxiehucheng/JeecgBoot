@@ -1,42 +1,28 @@
 package org.jeecg.modules.demo.kid_tasks.controller;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.system.query.QueryRuleEnum;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.config.shiro.IgnoreAuth;
 import org.jeecg.modules.demo.kid_tasks.entity.KidTasks;
 import org.jeecg.modules.demo.kid_tasks.service.IKidTasksService;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
-import org.jeecg.modules.system.entity.SysUser;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.jeecg.common.aspect.annotation.AutoLog;
@@ -73,7 +59,16 @@ public class KidTasksController extends JeecgController<KidTasks, IKidTasksServi
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
         QueryWrapper<KidTasks> queryWrapper = QueryGenerator.initQueryWrapper(kidTasks, req.getParameterMap());
-		Page<KidTasks> page = new Page<KidTasks>(pageNo, pageSize);
+
+		//获取当前登录用户
+		LoginUser loginUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+		String userName = loginUser.getUsername();
+		// 增加查询条件，查询当前登录用户创建的数据
+		if (oConvertUtils.isNotEmpty(userName)) {
+			queryWrapper.eq("create_by", userName);
+		}
+
+		Page<KidTasks> page = new Page<>(pageNo, pageSize);
 		IPage<KidTasks> pageList = kidTasksService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}

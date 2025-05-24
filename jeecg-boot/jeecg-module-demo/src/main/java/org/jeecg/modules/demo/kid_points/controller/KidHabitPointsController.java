@@ -9,11 +9,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.demo.kid_points.entity.KidHabitPoints;
 import org.jeecg.modules.demo.kid_points.service.IKidHabitPointsService;
@@ -69,6 +71,18 @@ public class KidHabitPointsController extends JeecgController<KidHabitPoints, IK
         @RequestParam(name = "userName", defaultValue = "") String userName,
         @RequestParam(name = "queryDate", defaultValue = "") String queryDate,
         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
+
+        if (oConvertUtils.isEmpty(userName)) {
+            //获取当前登录用户
+            LoginUser loginUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+            String loginUserUsername = loginUser.getUsername();
+            // 增加查询条件，查询当前登录用户创建的数据
+            if (oConvertUtils.isNotEmpty(loginUserUsername)) {
+                kidHabitPoints.setUserName(loginUserUsername);
+            }
+        }
+
+
         QueryWrapper<KidHabitPoints> queryWrapper = QueryGenerator.initQueryWrapper(kidHabitPoints,
             req.getParameterMap());
         // 设置查询条件
